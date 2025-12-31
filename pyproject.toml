@@ -1,5 +1,5 @@
 [project]
-name = "data-science"
+name = "base-agent"
 version = "0.1.0"
 description = "Meeting Insights Agent: BigQuery-powered analytics over meeting minutes"
 readme = "README.md"
@@ -40,7 +40,7 @@ requires = ["uv_build>=0.7.19,<0.8.0"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
-module-name = "data_science"
+module-name = "base_agent"
 module-root = ""
 
 [tool.pytest.ini_options]

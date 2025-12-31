@@ -17,7 +17,7 @@ import os
 
 from vertexai.preview.extensions import Extension
 
-USER_AGENT = "adk-samples-data-science-agent"
+USER_AGENT = "adk-samples-base-agent-agent"
 
 
 def list_all_extensions():

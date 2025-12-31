@@ -18,7 +18,7 @@ MODEL_NAME = "gemini-2.5-pro"
 
 # Base directories
 BASE_DIR = Path(__file__).parent.parent
-TEMPLATES_DIR = BASE_DIR / "data_science" / "templates"
+TEMPLATES_DIR = BASE_DIR / "base_agent" / "templates"
 OUTPUT_DIR = BASE_DIR / "output"
 
 # Template file path

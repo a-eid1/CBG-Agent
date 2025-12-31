@@ -12,11 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Top level agent for data agent multi-agents.
+"""Top level agent"""
 
--- it get data from database (e.g., BQ) using NL2SQL
--- then, it use NL2Py to do further data analysis as needed
-"""
 import base64
 import json
 import logging
@@ -76,12 +73,6 @@ if ENABLE_WANDB_TRACING:
     logging.basicConfig(level=logging.INFO)
     _logger = logging.getLogger(__name__)
 
-    # Initialize module-level config variables
-    _dataset_config = {}
-    _database_settings = {}
-    _supported_dataset_types = ["bigquery"]
-    _required_dataset_config_params = ["name", "description"]
-
 # --- Logging setup ----------------------------------------------------------
 
 import google.cloud.logging
@@ -112,7 +103,7 @@ def get_root_agent() -> LlmAgent:
         instruction=return_instructions_root(),
         global_instruction=(
             f"""
-            You are a Data Science and Data Analytics Multi Agent System.
+            You are an Information Agent System.
             Todays date: {date.today()}
             """
         ),

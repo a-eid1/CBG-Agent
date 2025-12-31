@@ -13,13 +13,13 @@
 # limitations under the License.
 
 """
-This file initializes a FastAPI application for Data Science agent
+This file initializes a FastAPI application for the agent
 using get_fast_api_app() from ADK. Session service URI and a flag
 for a web interface configured via environment variables.
 It can then be run using Uvicorn, which listens on a port specified by
 the PORT environment variable or defaults to 8080.
 This approach offers more flexibility, particularly if you want to
-embed Data Science agent within a custom FastAPI application.
+embed the agent within a custom FastAPI application.
 It is used for Cloud Run deployment with standard gcloud run deploy command.
 """
 
