@@ -27,6 +27,7 @@ from google.adk.tools import load_artifacts
 from google.genai import types
 
 from .prompts import return_instructions_root
+from .config import ROOT_AGENT_MODEL
 
 # --- OpenTelemetry / Weave setup ---------------------------------------------
 
@@ -95,18 +96,14 @@ logger.info("Libraries imported and logging configured.")
 
 # --- Root Agent Definition ----------------------------------------------------
 
+from .tools import parse_jd_pdf, generate_competency_model, render_competency_pptx
+
 def get_root_agent() -> LlmAgent:
-    tools = [load_artifacts]
+    tools = [load_artifacts, parse_jd_pdf, generate_competency_model, render_competency_pptx]
     agent = LlmAgent(
-        model=os.getenv("ROOT_AGENT_MODEL", "gemini-2.5-flash"),
-        name="meeting_insights_root_agent",
+        model=ROOT_AGENT_MODEL,
+        name="competency_framework_agent",
         instruction=return_instructions_root(),
-        global_instruction=(
-            f"""
-            You are an Information Agent System.
-            Todays date: {date.today()}
-            """
-        ),
         tools=tools,  # type: ignore
         generate_content_config=types.GenerateContentConfig(temperature=0.01),
     )

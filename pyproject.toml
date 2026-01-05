@@ -1,7 +1,7 @@
 [project]
 name = "base-agent"
 version = "0.1.0"
-description = "Meeting Insights Agent: BigQuery-powered analytics over meeting minutes"
+description = "Competency Framework Generator: AI-powered HR document automation for UAE Government"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -24,6 +24,10 @@ dependencies = [
     "google-adk==1.16.0",
     "openpyxl>=3.1.5",
     "python-docx>=1.2.0",
+    "pdfplumber>=0.11.0",
+    "python-pptx>=0.6.23",
+    "google-cloud-storage>=2.14.0",
+    "pymupdf>=1.26.7",
 ]
 
 [project.optional-dependencies]
@@ -44,10 +48,8 @@ module-name = "base_agent"
 module-root = ""
 
 [tool.pytest.ini_options]
-# This section is for pytest configuration and does not need to be changed.
 console_output_style = "progress"
 addopts = "-vv -s"
-#addopts = "-vv -s --pdb"
 testpaths = ["tests/"]
 log_level = "DEBUG"
 log_cli = true
@@ -55,8 +57,5 @@ log_auto_indent = true
 log_cli_date_format = "%Y-%m-%d %H:%M:%S"
 log_cli_format = "[%(asctime)s] %(levelname)s (%(funcName)s) \t [%(pathname)s:%(lineno)d] %(message)s"
 filterwarnings = [
-    #"error",
     "ignore::UserWarning",
-    # note the use of single quote below to denote "raw" strings in TOML
-    #'ignore:function ham\(\) is deprecated:DeprecationWarning',
 ]
