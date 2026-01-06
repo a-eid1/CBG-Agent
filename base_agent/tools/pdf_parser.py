@@ -335,7 +335,23 @@ async def parse_jd_pdf(
     model_name: str = "gemini-2.5-pro",
     tool_context=None,
 ) -> Dict[str, Any]:
-    """Parse an uploaded Arabic JD PDF and extract structured job data."""
+    """
+    [Step 1] Extracts structured Job Description data from an Arabic PDF.
+
+    This tool reads a "Job Description Card" (بطاقة الوصف الوظيفي) and converts it
+    into a clean JSON format required for competency modeling. It handles text extraction
+    and includes an OCR fallback for scanned documents.
+
+    Args:
+        selected_job_index: If the PDF contains multiple jobs, specify the index (0-based) to extract.
+        pdf_artifact_filename: The name of the PDF file uploaded by the user.
+        model_name: The Gemini model version to use for extraction.
+        tool_context: ADK context (injected automatically).
+
+    Returns:
+        A dictionary containing the parsed fields (job_title, duties, financial_grade, etc.).
+        If multiple jobs are found and no index is provided, returns a list of jobs.
+    """
     if tool_context is None:
         raise ValueError("tool_context is required (ADK injects it).")
 

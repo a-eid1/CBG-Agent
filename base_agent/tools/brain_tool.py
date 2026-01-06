@@ -26,19 +26,23 @@ async def generate_competency_model(
     rulebook_artifact_filename: Optional[str] = None,
     tool_context=None,
 ) -> Dict[str, Any]:
-    """Generate the Step-2 competency JSON contract.
+    """
+    [Step 2] Generates the Competency Matrix JSON based on Government Standards.
+
+    This tool acts as the "Brain". It takes the raw Job Description (from Step 1),
+    applies the logic from the 2025 Competency Rulebook (Bloom's Taxonomy), and
+    produces the structured content required for the PowerPoint slide.
 
     Args:
-        job: Parsed job payload from Step-1 (the value of `parse_jd_pdf(...)['job']`).
-        chosen_competency: If the Brain requested clarification, pass the user's selected
-            main competency to steer regeneration.
-        model_name: Gemini model name.
-        rulebook_artifact_filename: Optional artifact filename for the rulebook PDF.
+        job: The structured job data dict returned by `parse_jd_pdf`.
+        chosen_competency: If the AI was unsure previously, this is the user's manual selection.
+        model_name: The Gemini model version.
+        rulebook_artifact_filename: Optional PDF to use as a reference source (e.g., the Rulebook).
+        tool_context: ADK context (injected automatically).
 
     Returns:
-        A dict:
-          - {"mode": "ok", "data": [<contract>]}
-          - {"mode": "clarification", "data": {needs_clarification...}}
+        A dictionary containing the full competency matrix (Main competency, sub-topics,
+        and 4 proficiency levels) ready for rendering.
     """
 
     # Optional rulebook context via artifact
@@ -47,7 +51,6 @@ async def generate_competency_model(
         try:
             part = await tool_context.load_artifact(filename=rulebook_artifact_filename)
             
-            # --- ROBUST EXTRACTION START ---
             if isinstance(part, dict) and "inlineData" in part:
                 b64 = part["inlineData"].get("data")
                 if b64: rulebook_bytes = base64.b64decode(b64)
@@ -55,7 +58,6 @@ async def generate_competency_model(
                 rulebook_bytes = part.inline_data.data
             elif part and hasattr(part, "data"):
                 rulebook_bytes = part.data
-            # --- ROBUST EXTRACTION END ---
             
         except Exception:
             rulebook_bytes = None

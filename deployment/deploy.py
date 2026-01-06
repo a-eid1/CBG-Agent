@@ -183,7 +183,7 @@ def main(argv: list[str]) -> None:  # pylint: disable=unused-argument
         FLAGS.location if FLAGS.location else os.getenv("GOOGLE_CLOUD_LOCATION")
     )
     # Default bucket name convention if not provided
-    default_bucket_name = f"{project_id}-adk-staging4" if project_id else None
+    default_bucket_name = f"{project_id}-adk-staging5" if project_id else None
     bucket_name = (
         FLAGS.bucket
         if FLAGS.bucket

@@ -243,9 +243,12 @@ def generate_competency_slides(
 def default_output_name(job_title: str, *, when: Optional[_dt.date] = None) -> str:
     """
     Utility: build {job_title}_{date}.pptx with safe filename characters.
+    Forces underscores instead of spaces to ensure clickable Markdown links.
     """
     when = when or _dt.date.today()
+    # Allow Arabic chars, English chars, numbers, and hyphens. Remove everything else.
     safe = re.sub(r"[^\w\u0600-\u06FF\- ]+", "", job_title, flags=re.UNICODE).strip()
+    # CRITICAL FIX: Replace ALL whitespace (spaces, tabs) with underscores
     safe = re.sub(r"\s+", "_", safe) or "job"
     return f"{safe}_{when.isoformat()}.pptx"
 
@@ -318,16 +321,24 @@ async def render_competency_pptx(
     strict: bool = True,
     tool_context=None,
 ) -> Dict[str, Any]:
-    """Render the competency PPTX, upload it to GCS by default, and return the URL.
+    """
+    [Step 3] Generates the final PowerPoint file and uploads it to Cloud Storage.
 
-    Delivery behavior:
-    - Default: upload to GCS and return:
-        https://storage.cloud.google.com/BUCKET/OBJECT
-    - Optional: also return a V4 signed URL if enabled.
+    This tool takes the structured JSON data (from Step 2) and overlays it onto
+    the official government PPTX template.
 
-    Safety:
-    - If GCS upload fails (or bucket not configured), the PPTX is still created
-      and returned as a session artifact when available.
+    Args:
+        jobs_data: List of competency dictionaries (output from generate_competency_model).
+        job_title: The name of the job (used for the filename).
+        output_filename: Optional override for the .pptx filename.
+        template_artifact_filename: Optional custom template (defaults to system template).
+        layout_name: The slide master layout to use (default: 'Competency_Layout').
+        strict: If True, fails if template placeholders are missing.
+        tool_context: ADK context (injected automatically).
+
+    Returns:
+        A dictionary containing the 'final_message' (in Arabic) with the download link,
+        upload status, and GCS details.
     """
 
     from google.genai import types
@@ -402,8 +413,8 @@ async def render_competency_pptx(
             )
             if signed_url:
                 final_message += (
-                    "\n\n(Optional signed URL): "
-                    f"[{out_name} (signed)]({signed_url})"
+                    "\n\n(رابط موقع): "
+                    f"[{out_name}]({signed_url})"
                 )
         else:
             # Optional artifact fallback (useful in local dev / if upload fails)
@@ -423,11 +434,12 @@ async def render_competency_pptx(
                 except Exception:
                     artifact_saved = False
             final_message = (
-                "Successfully generated the Competency Matrix.\n\n"
-                f"GCS upload failed ({upload_error})."
+                "تم إنشاء مصفوفة الكفاءات بنجاح، ولكن تعذر الرفع إلى السحابة.\n"
+                f"الخطأ: ({upload_error})\n"
             )
             if artifact_saved and artifact_filename:
-                final_message += f"\n\nالملف PPTX مرفق أيضًا كأداة: {artifact_filename}"
+                final_message += f"\nالملف متاح كـ Artifact باسم: {artifact_filename}"
+
 
         return {
             "output_filename": out_name,
